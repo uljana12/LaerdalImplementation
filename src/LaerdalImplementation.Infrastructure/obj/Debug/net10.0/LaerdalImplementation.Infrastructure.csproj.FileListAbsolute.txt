@@ -64,3 +64,4 @@
 /Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Infrastructure/obj/Debug/net10.0/LaerdalImplementation.Infrastructure.pdb
 /Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Infrastructure/obj/Debug/net10.0/LaerdalImplementation.Infrastructure.genruntimeconfig.cache
 /Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Infrastructure/obj/Debug/net10.0/ref/LaerdalImplementation.Infrastructure.dll
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Infrastructure/obj/Debug/net10.0/LaerdalImplementation.Infrastructure.sourcelink.json

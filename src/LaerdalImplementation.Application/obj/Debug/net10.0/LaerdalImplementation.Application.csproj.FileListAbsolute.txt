@@ -65,3 +65,4 @@
 /Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Application/obj/Debug/net10.0/LaerdalImplementation.Application.xml
 /Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Application/obj/Debug/net10.0/LaerdalImplementation.Application.pdb
 /Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Application/obj/Debug/net10.0/ref/LaerdalImplementation.Application.dll
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Application/obj/Debug/net10.0/LaerdalImplementation.Application.sourcelink.json

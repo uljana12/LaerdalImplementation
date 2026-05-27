@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LaerdalImplementation.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+018d9c0b9e58277dbfe0f2150e778ef6ab49dd7a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1d7dfd965bed34f282d2cc7bfeca7eec77e233d4")]
 [assembly: System.Reflection.AssemblyProductAttribute("LaerdalImplementation.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LaerdalImplementation.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

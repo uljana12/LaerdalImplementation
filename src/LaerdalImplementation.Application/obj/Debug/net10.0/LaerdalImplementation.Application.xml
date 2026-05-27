@@ -4,6 +4,42 @@
         <name>LaerdalImplementation.Application</name>
     </assembly>
     <members>
+        <member name="T:LaerdalImplementation.Application.Commands.CreateManifestCommand">
+            <summary>
+            Command that creates a new manifest in Draft status for the specified organization.
+            </summary>
+            <param name="OrganizationId">The owning organization's ID.</param>
+            <param name="Name">Display name for the manifest.</param>
+            <param name="Description">Optional human-readable description.</param>
+            <param name="Content">Optional initial JSON content blob.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Commands.CreateManifestCommand.#ctor(System.Guid,System.String,System.String,System.String)">
+            <summary>
+            Command that creates a new manifest in Draft status for the specified organization.
+            </summary>
+            <param name="OrganizationId">The owning organization's ID.</param>
+            <param name="Name">Display name for the manifest.</param>
+            <param name="Description">Optional human-readable description.</param>
+            <param name="Content">Optional initial JSON content blob.</param>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Commands.CreateManifestCommand.OrganizationId">
+            <summary>The owning organization's ID.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Commands.CreateManifestCommand.Name">
+            <summary>Display name for the manifest.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Commands.CreateManifestCommand.Description">
+            <summary>Optional human-readable description.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Commands.CreateManifestCommand.Content">
+            <summary>Optional initial JSON content blob.</summary>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Commands.CreateManifestCommandHandler">
+            <summary>
+            Handles <see cref="T:LaerdalImplementation.Application.Commands.CreateManifestCommand"/>.
+            Creates a new draft manifest for the specified organization and persists it.
+            </summary>
+        </member>
         <member name="T:LaerdalImplementation.Application.Commands.CreateOrganizationCommand">
             <summary>
             Command that requests the creation of a new organization.
@@ -132,25 +168,10 @@
         <member name="T:LaerdalImplementation.Application.Commands.PublishManifestCommandHandler">
             <summary>
             Handles <see cref="T:LaerdalImplementation.Application.Commands.PublishManifestCommand"/>.
-            <para>
-            TODO: implement. Steps will be:
-            1. Load the draft manifest by ID (404 if not found, 400 if already published).
-            2. Load the current Published manifest for the org (may be null for first publish).
-            3. Calculate the new version using <c>ManifestVersion.Parse().Bump*()</c>.
-            4. Call <c>currentPublished?.Archive()</c> on the old manifest.
-            5. Call <c>draftManifest.Publish(newVersion.ToString())</c>.
-            6. Persist both changes — ideally in a single transaction so they're atomic.
-            7. Return the newly published manifest as a DTO.
-            </para>
+            1. Loads the draft manifest (returns null → 404 if not found).
+            2. Archives the currently published manifest for the org (if one exists).
+            3. Bumps the version and publishes the draft.
             </summary>
-        </member>
-        <member name="M:LaerdalImplementation.Application.Commands.PublishManifestCommandHandler.#ctor(LaerdalImplementation.Domain.Repositories.IManifestRepository)">
-            <summary>
-            Initializes the handler with the manifest repository injected by the DI container.
-            </summary>
-        </member>
-        <member name="M:LaerdalImplementation.Application.Commands.PublishManifestCommandHandler.Handle(LaerdalImplementation.Application.Commands.PublishManifestCommand,System.Threading.CancellationToken)">
-            <inheritdoc/>
         </member>
         <member name="T:LaerdalImplementation.Application.Commands.UpdateOrganizationCommand">
             <summary>
@@ -375,6 +396,27 @@
             if not provided.
             </param>
             <returns>A valid, unsaved <see cref="T:LaerdalImplementation.Domain.Entities.Organization"/> entity.</returns>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Queries.GetManifestsByOrganizationQuery">
+            <summary>
+            Query that returns all manifests (all statuses) for the given organization.
+            </summary>
+            <param name="OrganizationId">The owning organization's ID.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Queries.GetManifestsByOrganizationQuery.#ctor(System.Guid)">
+            <summary>
+            Query that returns all manifests (all statuses) for the given organization.
+            </summary>
+            <param name="OrganizationId">The owning organization's ID.</param>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Queries.GetManifestsByOrganizationQuery.OrganizationId">
+            <summary>The owning organization's ID.</summary>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Queries.GetManifestsByOrganizationQueryHandler">
+            <summary>
+            Handles <see cref="T:LaerdalImplementation.Application.Queries.GetManifestsByOrganizationQuery"/>.
+            Returns all manifests for the organization ordered newest first.
+            </summary>
         </member>
         <member name="T:LaerdalImplementation.Application.Queries.GetOrganizationByIdQuery">
             <summary>
