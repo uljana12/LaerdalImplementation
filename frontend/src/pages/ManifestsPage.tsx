@@ -38,8 +38,11 @@ export function ManifestsPage() {
         }
       />
 
-      <div className="p-6 pb-3">
+      <div className="p-6 pb-3 flex items-center gap-3">
         <OrgSelector orgs={orgs} value={orgId} onChange={setOrgId} />
+        {orgs.length === 0 && (
+          <p className="text-xs text-amber-700">⚠️ Organizations load from the local API — start the C# backend to populate this list.</p>
+        )}
       </div>
 
       <div className="mx-6 mb-6 bg-white rounded-lg border border-content-border overflow-hidden flex-1">
@@ -49,7 +52,7 @@ export function ManifestsPage() {
           </p>
         )}
         {orgId && isLoading && <p className="p-6 text-text-secondary text-sm">Loading…</p>}
-        {orgId && error    && <p className="p-6 text-laerdal-red text-sm">Could not load manifests — endpoint may be coming soon.</p>}
+        {orgId && error && <p className="p-6 text-amber-700 text-sm">⚠️ Manifests require the local C# API — run <code className="bg-amber-50 px-1 rounded">dotnet run</code> to connect.</p>}
         {orgId && !isLoading && !error && (
           <ManifestList manifests={manifests} onPublish={setToPublish} />
         )}
