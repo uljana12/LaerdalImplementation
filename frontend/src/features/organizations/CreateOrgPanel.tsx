@@ -19,17 +19,17 @@ export function CreateOrgPanel({ open, onClose, orgs }: Props) {
   const [name, setName]         = useState('')
   const [code, setCode]         = useState('')
   const [type, setType]         = useState<OrganizationType>(0)
-  const [parentId, setParentId] = useState<string>('')
+  const [parentId, setParentId] = useState<string>('none')
   const [error, setError]       = useState('')
 
   const mutation = useMutation({
     mutationFn: () => orgApi.create({
       name, code, type,
-      ...(parentId ? { parentId } : {}),
+      ...(parentId !== 'none' ? { parentId } : {}),
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['organizations'] })
-      setName(''); setCode(''); setType(0); setParentId(''); setError('')
+      setName(''); setCode(''); setType(0); setParentId('none'); setError('')
       onClose()
     },
     onError: (e: Error) => setError(e.message),
@@ -66,7 +66,7 @@ export function CreateOrgPanel({ open, onClose, orgs }: Props) {
             <Select value={parentId} onValueChange={setParentId}>
               <SelectTrigger><SelectValue placeholder="No parent (root org)" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No parent</SelectItem>
+                <SelectItem value="none">No parent (root org)</SelectItem>
                 {orgs.map(o => (
                   <SelectItem key={o.id} value={o.id}>{o.name}</SelectItem>
                 ))}
