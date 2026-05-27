@@ -1,0 +1,27 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+laerdal.db
+laerdal.db-shm
+laerdal.db-wal
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Tools / IDE
+.claude/
+.superpowers/
+.DS_Store
+*.key
+*.pptx
+*.py
+make_presentation.py
+
+# Docs (internal planning)
+docs/superpowers/
+architecture.md
+design.md
