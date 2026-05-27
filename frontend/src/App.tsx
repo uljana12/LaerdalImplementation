@@ -1,6 +1,7 @@
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { Topbar } from '@/components/layout/Topbar'
 import { Sidebar } from '@/components/layout/Sidebar'
+import { Toaster } from '@/components/ui/toaster'
 import { OrganizationsPage } from '@/pages/OrganizationsPage'
 import { ManifestsPage }     from '@/pages/ManifestsPage'
 import { DiscoverPage }       from '@/pages/DiscoverPage'
@@ -17,6 +18,7 @@ function Shell() {
           <Outlet />
         </main>
       </div>
+      <Toaster />
     </div>
   )
 }
