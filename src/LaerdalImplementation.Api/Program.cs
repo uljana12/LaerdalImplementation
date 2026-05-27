@@ -19,7 +19,7 @@ builder.Services.AddOpenApi();
 
 // Port — Railway (and most cloud platforms) set a PORT env var.
 // Fall back to 5000 for local development.
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5050";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 // Database — SQLite, path relative to working directory.
