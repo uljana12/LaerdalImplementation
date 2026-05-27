@@ -1,0 +1,9 @@
+**/.git
+**/.vs
+**/bin
+**/obj
+**/*.user
+frontend/
+docs/
+*.md
+*.sln.DotSettings

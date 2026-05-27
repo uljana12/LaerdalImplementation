@@ -37,16 +37,7 @@ export function OrganizationsPage() {
       />
 
       {isLoading && <p className="p-6 text-text-secondary text-sm">Loading…</p>}
-      {error && (
-        <div className="mx-6 mt-6 bg-amber-50 border border-amber-200 rounded-lg px-5 py-4 text-sm text-amber-800">
-          <p className="font-semibold mb-1">🖥️ Local API required</p>
-          <p>This section talks to the C# .NET backend which runs on your machine. To see it live, run:</p>
-          <code className="block mt-2 bg-amber-100 rounded px-3 py-2 text-xs font-mono">
-            dotnet run --project src/LaerdalImplementation.Api
-          </code>
-          <p className="mt-2 text-xs text-amber-700">The CPR Finder section (Discover, Book, Certifications) works fully without the API — try it in the sidebar.</p>
-        </div>
-      )}
+      {error && <p className="p-6 text-laerdal-red text-sm">Could not reach the API. Check that it is running.</p>}
 
       {!isLoading && !error && (
         <>

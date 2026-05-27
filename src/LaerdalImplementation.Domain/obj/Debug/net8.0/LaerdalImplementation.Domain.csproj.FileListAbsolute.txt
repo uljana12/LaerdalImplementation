@@ -1,0 +1,13 @@
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Domain/bin/Debug/net8.0/LaerdalImplementation.Domain.deps.json
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Domain/bin/Debug/net8.0/LaerdalImplementation.Domain.dll
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Domain/bin/Debug/net8.0/LaerdalImplementation.Domain.pdb
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Domain/bin/Debug/net8.0/LaerdalImplementation.Domain.xml
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Domain/obj/Debug/net8.0/LaerdalImplementation.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Domain/obj/Debug/net8.0/LaerdalImplementation.Domain.AssemblyInfoInputs.cache
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Domain/obj/Debug/net8.0/LaerdalImplementation.Domain.AssemblyInfo.cs
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Domain/obj/Debug/net8.0/LaerdalImplementation.Domain.csproj.CoreCompileInputs.cache
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Domain/obj/Debug/net8.0/LaerdalImplementation.Domain.dll
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Domain/obj/Debug/net8.0/refint/LaerdalImplementation.Domain.dll
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Domain/obj/Debug/net8.0/LaerdalImplementation.Domain.xml
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Domain/obj/Debug/net8.0/LaerdalImplementation.Domain.pdb
+/Users/ulyanahassan/VScodeProjects/LaerdalImplementation/src/LaerdalImplementation.Domain/obj/Debug/net8.0/ref/LaerdalImplementation.Domain.dll

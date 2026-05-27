@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theme Options</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a1016; font-family: 'Segoe UI', system-ui, sans-serif; color: #fff; padding: 24px; }
+  h2 { font-size: 1.3em; margin-bottom: 6px; }
+  .subtitle { color: #7a9ab5; font-size: 0.9em; margin-bottom: 20px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  .choice-wrap {
+    cursor: pointer; border-radius: 10px; border: 2px solid rgba(255,255,255,0.08);
+    overflow: hidden; transition: border-color 0.2s;
+  }
+  .choice-wrap:hover { border-color: rgba(200,16,46,0.5); }
+  .choice-wrap.selected { border-color: #C8102E; }
+
+  .choice-label {
+    padding: 10px 14px; background: #101e2e;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .choice-letter {
+    width: 24px; height: 24px; border-radius: 50%; background: #C8102E;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75em; font-weight: 700; flex-shrink: 0;
+  }
+  .choice-title { font-size: 0.85em; font-weight: 600; }
+  .choice-desc { font-size: 0.72em; color: #6a8a9f; margin-top: 2px; }
+
+  /* ── THEME A: Full Dark ── */
+  .dark-shell { display: grid; grid-template-rows: 40px 1fr; grid-template-columns: 150px 1fr; height: 260px; }
+  .dark-topbar { grid-column: 1/-1; background: #0D1B2A; border-bottom: 1px solid rgba(255,255,255,0.07); display: flex; align-items: center; padding: 0 12px; gap: 8px; }
+  .dark-logo { width: 20px; height: 20px; background: #C8102E; border-radius: 3px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:0.65em; }
+  .dark-logo-txt { font-size: 0.8em; font-weight: 700; }
+  .dark-logo-txt span { color: #C8102E; }
+  .dark-sidebar { background: #101e2e; padding: 10px 0; border-right: 1px solid rgba(255,255,255,0.05); }
+  .dark-nav { padding: 7px 10px; font-size: 0.7em; color: #6a8a9f; display:flex; align-items:center; gap:6px; border-left: 2px solid transparent; }
+  .dark-nav.active { color:#fff; background: rgba(200,16,46,0.08); border-left-color: #C8102E; }
+  .dark-section-lbl { font-size:0.58em; color:#3a5570; padding:8px 10px 4px; text-transform:uppercase; letter-spacing:0.1em; font-weight:700; }
+  .dark-main { background: #0D1B2A; padding: 14px; }
+  .dark-card { background:#162336; border-radius:5px; padding:10px; margin-bottom:8px; font-size:0.72em; }
+  .dark-card-lbl { color:#4a6880; font-size:0.85em; margin-bottom:3px; }
+  .dark-card-val { color:#fff; font-weight:600; }
+  .dark-row { display:grid; grid-template-columns:2fr 1fr; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.7em; }
+  .dark-row .n { color:#d0e8f8; }
+  .dark-row .c { color:#4a6880; font-family:monospace; }
+  .dark-page-title { font-size:0.85em; font-weight:700; color:#fff; margin-bottom:2px; }
+  .dark-accent { width:28px; height:2px; background:#C8102E; margin-bottom:8px; border-radius:1px; }
+
+  /* ── THEME B: Full Light ── */
+  .light-shell { display: grid; grid-template-rows: 40px 1fr; grid-template-columns: 150px 1fr; height: 260px; }
+  .light-topbar { grid-column: 1/-1; background: #fff; border-bottom: 1px solid #e5eaef; display: flex; align-items: center; padding: 0 12px; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .light-logo { width: 20px; height: 20px; background: #C8102E; border-radius: 3px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:0.65em; color:#fff; }
+  .light-logo-txt { font-size: 0.8em; font-weight: 700; color: #1a2a3a; }
+  .light-logo-txt span { color: #C8102E; }
+  .light-sidebar { background: #f7f9fb; padding: 10px 0; border-right: 1px solid #e5eaef; }
+  .light-nav { padding: 7px 10px; font-size: 0.7em; color: #6a7e8f; display:flex; align-items:center; gap:6px; border-left: 2px solid transparent; }
+  .light-nav.active { color:#1a2a3a; background: #fff; border-left-color: #C8102E; font-weight:600; }
+  .light-section-lbl { font-size:0.58em; color:#9ab0bf; padding:8px 10px 4px; text-transform:uppercase; letter-spacing:0.1em; font-weight:700; }
+  .light-main { background: #f0f4f8; padding: 14px; }
+  .light-card { background:#fff; border-radius:5px; padding:10px; margin-bottom:8px; font-size:0.72em; border: 1px solid #e5eaef; }
+  .light-card-lbl { color:#8a9faf; font-size:0.85em; margin-bottom:3px; }
+  .light-card-val { color:#1a2a3a; font-weight:600; }
+  .light-row { display:grid; grid-template-columns:2fr 1fr; padding:7px 0; border-bottom:1px solid #edf1f4; font-size:0.7em; }
+  .light-row .n { color:#1a2a3a; }
+  .light-row .c { color:#8a9faf; font-family:monospace; }
+  .light-page-title { font-size:0.85em; font-weight:700; color:#1a2a3a; margin-bottom:2px; }
+  .light-accent { width:28px; height:2px; background:#C8102E; margin-bottom:8px; border-radius:1px; }
+
+  /* ── THEME C: Hybrid ── */
+  .hybrid-shell { display: grid; grid-template-rows: 40px 1fr; grid-template-columns: 150px 1fr; height: 260px; }
+  .hybrid-topbar { grid-column: 1/-1; background: #0D1B2A; border-bottom: 1px solid rgba(255,255,255,0.07); display: flex; align-items: center; padding: 0 12px; gap: 8px; }
+  .hybrid-logo { width: 20px; height: 20px; background: #C8102E; border-radius: 3px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:0.65em; }
+  .hybrid-logo-txt { font-size: 0.8em; font-weight: 700; color:#fff; }
+  .hybrid-logo-txt span { color: #C8102E; }
+  .hybrid-sidebar { background: #101e2e; padding: 10px 0; border-right: 1px solid rgba(255,255,255,0.05); }
+  .hybrid-nav { padding: 7px 10px; font-size: 0.7em; color: #6a8a9f; display:flex; align-items:center; gap:6px; border-left: 2px solid transparent; }
+  .hybrid-nav.active { color:#fff; background: rgba(200,16,46,0.08); border-left-color: #C8102E; }
+  .hybrid-section-lbl { font-size:0.58em; color:#3a5570; padding:8px 10px 4px; text-transform:uppercase; letter-spacing:0.1em; font-weight:700; }
+  .hybrid-main { background: #f0f4f8; padding: 14px; }
+  .hybrid-card { background:#fff; border-radius:5px; padding:10px; margin-bottom:8px; font-size:0.72em; border: 1px solid #e5eaef; }
+  .hybrid-card-lbl { color:#8a9faf; font-size:0.85em; margin-bottom:3px; }
+  .hybrid-card-val { color:#1a2a3a; font-weight:600; }
+  .hybrid-row { display:grid; grid-template-columns:2fr 1fr; padding:7px 0; border-bottom:1px solid #edf1f4; font-size:0.7em; }
+  .hybrid-row .n { color:#1a2a3a; }
+  .hybrid-row .c { color:#8a9faf; font-family:monospace; }
+  .hybrid-page-title { font-size:0.85em; font-weight:700; color:#1a2a3a; margin-bottom:2px; }
+  .hybrid-accent { width:28px; height:2px; background:#C8102E; margin-bottom:8px; border-radius:1px; }
+
+  .tag { display:inline-block; font-size:0.65em; padding:2px 7px; border-radius:3px; margin-top:6px; }
+  .tag-dark { background:rgba(255,255,255,0.06); color:#7a9ab5; }
+  .tag-light { background:#e8f0f6; color:#4a6880; }
+  .tag-rec { background:rgba(200,16,46,0.12); color:#f08090; border:1px solid rgba(200,16,46,0.25); }
+</style>
+</head>
+<body>
+
+<h2>Which theme feels more Laerdal?</h2>
+<p class="subtitle">All three use the same red #C8102E accent and the same layout. The difference is light vs dark content area.</p>
+
+<div class="grid">
+
+  <!-- A: Full Dark -->
+  <div class="choice-wrap" data-choice="a" onclick="pick(this)">
+    <div class="choice-label">
+      <div class="choice-letter">A</div>
+      <div>
+        <div class="choice-title">Full Dark</div>
+        <div class="choice-desc">Like your presentation slides<br><span class="tag tag-dark">Modern SaaS feel</span></div>
+      </div>
+    </div>
+    <div class="dark-shell">
+      <div class="dark-topbar"><div class="dark-logo">L</div><div class="dark-logo-txt">Laerdal <span>Platform</span></div></div>
+      <div class="dark-sidebar">
+        <div class="dark-section-lbl">Implementer</div>
+        <div class="dark-nav active">🏢 Organizations</div>
+        <div class="dark-nav">📋 Manifests</div>
+        <div style="height:1px;background:rgba(255,255,255,0.05);margin:6px 0;"></div>
+        <div class="dark-section-lbl">CPR Finder</div>
+        <div class="dark-nav">📍 Discover</div>
+        <div class="dark-nav">📅 Book</div>
+      </div>
+      <div class="dark-main">
+        <div class="dark-page-title">Organizations</div>
+        <div class="dark-accent"></div>
+        <div class="dark-card"><div class="dark-card-lbl">Total</div><div class="dark-card-val">12 organizations</div></div>
+        <div class="dark-row"><div class="n">🏥 City Hospital</div><div class="c">CITY</div></div>
+        <div class="dark-row"><div class="n">&nbsp;└ Cardiology</div><div class="c">CARD</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B: Full Light -->
+  <div class="choice-wrap" data-choice="b" onclick="pick(this)">
+    <div class="choice-label">
+      <div class="choice-letter">B</div>
+      <div>
+        <div class="choice-title">Full Light</div>
+        <div class="choice-desc">Matches laerdal.com<br><span class="tag tag-light">Clinical / enterprise feel</span></div>
+      </div>
+    </div>
+    <div class="light-shell">
+      <div class="light-topbar"><div class="light-logo">L</div><div class="light-logo-txt">Laerdal <span>Platform</span></div></div>
+      <div class="light-sidebar">
+        <div class="light-section-lbl">Implementer</div>
+        <div class="light-nav active">🏢 Organizations</div>
+        <div class="light-nav">📋 Manifests</div>
+        <div style="height:1px;background:#e5eaef;margin:6px 0;"></div>
+        <div class="light-section-lbl">CPR Finder</div>
+        <div class="light-nav">📍 Discover</div>
+        <div class="light-nav">📅 Book</div>
+      </div>
+      <div class="light-main">
+        <div class="light-page-title">Organizations</div>
+        <div class="light-accent"></div>
+        <div class="light-card"><div class="light-card-lbl">Total</div><div class="light-card-val">12 organizations</div></div>
+        <div class="light-row"><div class="n">🏥 City Hospital</div><div class="c">CITY</div></div>
+        <div class="light-row"><div class="n">&nbsp;└ Cardiology</div><div class="c">CARD</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C: Hybrid -->
+  <div class="choice-wrap" data-choice="c" onclick="pick(this)">
+    <div class="choice-label">
+      <div class="choice-letter">C</div>
+      <div>
+        <div class="choice-title">Hybrid <span class="tag tag-rec">Recommended</span></div>
+        <div class="choice-desc">Dark sidebar + light content</div>
+      </div>
+    </div>
+    <div class="hybrid-shell">
+      <div class="hybrid-topbar"><div class="hybrid-logo">L</div><div class="hybrid-logo-txt">Laerdal <span>Platform</span></div></div>
+      <div class="hybrid-sidebar">
+        <div class="hybrid-section-lbl">Implementer</div>
+        <div class="hybrid-nav active">🏢 Organizations</div>
+        <div class="hybrid-nav">📋 Manifests</div>
+        <div style="height:1px;background:rgba(255,255,255,0.05);margin:6px 0;"></div>
+        <div class="hybrid-section-lbl">CPR Finder</div>
+        <div class="hybrid-nav">📍 Discover</div>
+        <div class="hybrid-nav">📅 Book</div>
+      </div>
+      <div class="hybrid-main">
+        <div class="hybrid-page-title">Organizations</div>
+        <div class="hybrid-accent"></div>
+        <div class="hybrid-card"><div class="hybrid-card-lbl">Total</div><div class="hybrid-card-val">12 organizations</div></div>
+        <div class="hybrid-row"><div class="n">🏥 City Hospital</div><div class="c">CITY</div></div>
+        <div class="hybrid-row"><div class="n">&nbsp;└ Cardiology</div><div class="c">CARD</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function pick(el) {
+  document.querySelectorAll('.choice-wrap').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  if (window.recordChoice) window.recordChoice(el.dataset.choice, el.querySelector('.choice-title').textContent);
+}
+</script>
+</body>
+</html>

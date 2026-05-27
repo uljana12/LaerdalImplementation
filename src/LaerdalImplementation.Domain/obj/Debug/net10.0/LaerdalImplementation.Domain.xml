@@ -1,0 +1,366 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LaerdalImplementation.Domain</name>
+    </assembly>
+    <members>
+        <member name="T:LaerdalImplementation.Domain.Entities.Manifest">
+            <summary>
+            A versioned, auditable bundle that describes the structure and locations of course
+            content (courses, learning activities) for an organization's training needs.
+            <para>
+            Manifests follow a strict lifecycle: <see cref="F:LaerdalImplementation.Domain.Enums.ManifestStatus.Draft"/> →
+            <see cref="F:LaerdalImplementation.Domain.Enums.ManifestStatus.Published"/> → <see cref="F:LaerdalImplementation.Domain.Enums.ManifestStatus.Archived"/>.
+            Once published, a manifest is immutable — content changes require a new version.
+            This ensures learners mid-session always see a consistent snapshot of their content.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Manifest.Id">
+            <summary>Gets or sets the unique identifier for this manifest.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Manifest.OrganizationId">
+            <summary>Gets or sets the ID of the organization this manifest belongs to.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Manifest.Name">
+            <summary>Gets or sets the display name of the manifest.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Manifest.Description">
+            <summary>Gets or sets an optional human-readable description of what this manifest covers.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Manifest.Version">
+            <summary>
+            Gets or sets the semantic version string (e.g., "1.2.0"). Versions are assigned
+            at publish time and are unique per organization.
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Manifest.Status">
+            <summary>Gets or sets the current lifecycle status of the manifest.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Manifest.Content">
+            <summary>
+            Gets or sets the course content as a JSON string. The JSON structure describes
+            courses and their nested learning activities. Stored as a blob to avoid complex
+            joins when the training app fetches the full manifest.
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Manifest.PublishedAt">
+            <summary>
+            Gets or sets the UTC timestamp when this manifest was published, or <c>null</c>
+            if it is still a draft. Set once and never updated after publishing.
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Manifest.CreatedAt">
+            <summary>Gets or sets the UTC timestamp when this manifest was created.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Manifest.UpdatedAt">
+            <summary>Gets or sets the UTC timestamp of the most recent update.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Manifest.Organization">
+            <summary>Navigation property to the owning organization.</summary>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Entities.Manifest.CreateDraft(System.Guid,System.String,System.String,System.String)">
+            <summary>
+            Creates a new manifest in <see cref="F:LaerdalImplementation.Domain.Enums.ManifestStatus.Draft"/> status.
+            All manifests must start as drafts; they cannot be created in a published state.
+            </summary>
+            <param name="organizationId">The ID of the owning organization.</param>
+            <param name="name">Display name — must not be blank.</param>
+            <param name="description">Optional description.</param>
+            <param name="content">Optional initial JSON content; defaults to an empty object.</param>
+            <returns>A new draft <see cref="T:LaerdalImplementation.Domain.Entities.Manifest"/>.</returns>
+            <exception cref="T:System.ArgumentException">Thrown when name is empty.</exception>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Entities.Manifest.Publish(System.String)">
+            <summary>
+            Transitions this manifest from <see cref="F:LaerdalImplementation.Domain.Enums.ManifestStatus.Draft"/> to
+            <see cref="F:LaerdalImplementation.Domain.Enums.ManifestStatus.Published"/> and stamps <see cref="P:LaerdalImplementation.Domain.Entities.Manifest.PublishedAt"/>.
+            After this call the manifest is immutable — no further content changes are allowed;
+            new edits must be made on a new manifest version.
+            </summary>
+            <param name="newVersion">The semantic version string to assign (e.g., "1.0.0").</param>
+            <exception cref="T:System.InvalidOperationException">Thrown if the manifest is already published.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if <paramref name="newVersion"/> is blank.</exception>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Entities.Manifest.Archive">
+            <summary>
+            Transitions this manifest to <see cref="F:LaerdalImplementation.Domain.Enums.ManifestStatus.Archived"/>. Archiving
+            happens automatically when a newer manifest is published for the same organization.
+            Archived manifests are retained so in-flight learner sessions can still reference them.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">Thrown if the manifest is already archived.</exception>
+        </member>
+        <member name="T:LaerdalImplementation.Domain.Entities.Organization">
+            <summary>
+            Represents a hospital, department, or training centre that can be provisioned
+            and configured through the Laerdal Implementer. Organizations form a parent-child
+            hierarchy via <see cref="P:LaerdalImplementation.Domain.Entities.Organization.ParentId"/>; a null parent means a root-level organization.
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Organization.Id">
+            <summary>Gets or sets the unique identifier for this organization.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Organization.ParentId">
+            <summary>
+            Gets or sets the ID of the parent organization, or <c>null</c> if this is a root org.
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Organization.Name">
+            <summary>Gets or sets the display name of the organization.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Organization.Code">
+            <summary>
+            Gets or sets the short identifier code. Unique within the same parent scope.
+            Stored in uppercase.
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Organization.Type">
+            <summary>Gets or sets whether this is a hospital, department, or training centre.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Organization.ExternalId">
+            <summary>
+            Gets or sets an optional reference to an identity in an external system
+            (e.g., an OIDC directory or enterprise HR system).
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Organization.IsActive">
+            <summary>
+            Gets or sets whether the organization is active. Inactive organizations are
+            soft-deleted — they remain in the database to preserve audit trails and
+            foreign key relationships with manifests.
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Organization.CreatedAt">
+            <summary>Gets or sets the UTC timestamp when this organization was created.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Organization.UpdatedAt">
+            <summary>Gets or sets the UTC timestamp of the most recent update.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Organization.Parent">
+            <summary>Navigation property to the parent organization, if one exists.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Organization.Children">
+            <summary>Navigation property to all direct child organizations.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.Entities.Organization.Manifests">
+            <summary>Navigation property to all manifests owned by this organization.</summary>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Entities.Organization.Create(System.String,System.String,LaerdalImplementation.Domain.Enums.OrganizationType,System.Nullable{System.Guid},System.String)">
+            <summary>
+            Creates a new, active organization after validating the required fields.
+            Using a factory method rather than a public constructor ensures the entity
+            is always constructed in a valid state.
+            </summary>
+            <param name="name">Display name — must not be blank.</param>
+            <param name="code">Short identifier code — must not be blank; stored as uppercase.</param>
+            <param name="type">The kind of organization.</param>
+            <param name="parentId">ID of the parent org, or <c>null</c> for a root organization.</param>
+            <param name="externalId">Optional reference to an external identity system.</param>
+            <returns>A newly created, persisted-ready <see cref="T:LaerdalImplementation.Domain.Entities.Organization"/>.</returns>
+            <exception cref="T:System.ArgumentException">Thrown when name or code is empty.</exception>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Entities.Organization.Update(System.String,LaerdalImplementation.Domain.Enums.OrganizationType,System.Boolean)">
+            <summary>
+            Updates mutable fields on an existing organization and stamps <see cref="P:LaerdalImplementation.Domain.Entities.Organization.UpdatedAt"/>.
+            </summary>
+            <param name="name">New display name — must not be blank.</param>
+            <param name="type">New organization type.</param>
+            <param name="isActive">Whether the organization should remain active.</param>
+            <exception cref="T:System.ArgumentException">Thrown when name is empty.</exception>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Entities.Organization.CanBeDeleted">
+            <summary>
+            Checks whether this organization can be safely removed. A parent org cannot
+            be deleted while it still has active children, because that would orphan them.
+            </summary>
+            <returns><c>true</c> if there are no active child organizations; otherwise <c>false</c>.</returns>
+        </member>
+        <member name="T:LaerdalImplementation.Domain.Enums.ManifestStatus">
+            <summary>
+            Represents the lifecycle stage of a <see cref="T:LaerdalImplementation.Domain.Entities.Manifest"/>.
+            Transitions flow in one direction only: Draft → Published → Archived.
+            Stored as an integer in the database (0, 1, 2).
+            </summary>
+        </member>
+        <member name="F:LaerdalImplementation.Domain.Enums.ManifestStatus.Draft">
+            <summary>
+            The manifest is being edited and has not yet been released to learners.
+            Draft manifests can be freely modified or deleted.
+            </summary>
+        </member>
+        <member name="F:LaerdalImplementation.Domain.Enums.ManifestStatus.Published">
+            <summary>
+            The manifest has been released. Its content is immutable — any edits require
+            creating a new manifest version. Only one manifest per organization may be
+            in this state at a time.
+            </summary>
+        </member>
+        <member name="F:LaerdalImplementation.Domain.Enums.ManifestStatus.Archived">
+            <summary>
+            The manifest was previously published but has since been superseded by a newer
+            version. Archived manifests are retained so that in-flight learner sessions
+            can still reference their pinned snapshot.
+            </summary>
+        </member>
+        <member name="T:LaerdalImplementation.Domain.Enums.OrganizationType">
+            <summary>
+            Classifies the kind of organization. Stored as an integer in the database
+            (0, 1, 2) to avoid magic numbers in queries and application code.
+            </summary>
+        </member>
+        <member name="F:LaerdalImplementation.Domain.Enums.OrganizationType.Hospital">
+            <summary>A top-level hospital or healthcare institution.</summary>
+        </member>
+        <member name="F:LaerdalImplementation.Domain.Enums.OrganizationType.Department">
+            <summary>A department or sub-unit within a hospital.</summary>
+        </member>
+        <member name="F:LaerdalImplementation.Domain.Enums.OrganizationType.TrainingCenter">
+            <summary>A dedicated training centre, which may span multiple departments.</summary>
+        </member>
+        <member name="T:LaerdalImplementation.Domain.Repositories.IManifestRepository">
+            <summary>
+            Defines persistence operations for <see cref="T:LaerdalImplementation.Domain.Entities.Manifest"/> entities.
+            Lives in the Domain layer so the Application layer stays decoupled from any
+            specific storage technology. The EF Core implementation is in Infrastructure.
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Repositories.IManifestRepository.AddAsync(LaerdalImplementation.Domain.Entities.Manifest,System.Threading.CancellationToken)">
+            <summary>Persists a new manifest and returns the saved entity.</summary>
+            <param name="manifest">The manifest to insert.</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Repositories.IManifestRepository.GetByIdAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Retrieves a single manifest by its ID, including its owning organization,
+            or <c>null</c> if no match is found.
+            </summary>
+            <param name="id">The manifest's primary key.</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Repositories.IManifestRepository.GetPublishedByOrganizationAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Returns the single <see cref="F:LaerdalImplementation.Domain.Enums.ManifestStatus.Published"/> manifest for the given
+            organization, or <c>null</c> if none exists. Used by the training app to fetch
+            the active content snapshot before starting a learner session.
+            </summary>
+            <param name="organizationId">The owning organization's ID.</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Repositories.IManifestRepository.GetByOrganizationIdAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>Returns all manifests (all statuses) for the given organization.</summary>
+            <param name="organizationId">The owning organization's ID.</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Repositories.IManifestRepository.GetByOrganizationIdAndStatusAsync(System.Guid,LaerdalImplementation.Domain.Enums.ManifestStatus,System.Threading.CancellationToken)">
+            <summary>
+            Returns manifests for the given organization filtered to a specific status.
+            Useful for listing only drafts or only archived versions.
+            </summary>
+            <param name="organizationId">The owning organization's ID.</param>
+            <param name="status">The lifecycle stage to filter by.</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Repositories.IManifestRepository.UpdateAsync(LaerdalImplementation.Domain.Entities.Manifest,System.Threading.CancellationToken)">
+            <summary>
+            Persists changes to an existing manifest and returns the updated entity.
+            Used when archiving a previously published manifest or promoting a draft.
+            </summary>
+            <param name="manifest">The manifest with updated field values.</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+        </member>
+        <member name="T:LaerdalImplementation.Domain.Repositories.IOrganizationRepository">
+            <summary>
+            Defines persistence operations for <see cref="T:LaerdalImplementation.Domain.Entities.Organization"/> entities.
+            The interface lives in the Domain layer so that the Application layer can depend
+            on the abstraction rather than on any specific database technology.
+            The concrete implementation (EF Core / SQL Server) lives in the Infrastructure layer.
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Repositories.IOrganizationRepository.AddAsync(LaerdalImplementation.Domain.Entities.Organization,System.Threading.CancellationToken)">
+            <summary>Persists a new organization and returns the saved entity.</summary>
+            <param name="organization">The organization to insert.</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Repositories.IOrganizationRepository.GetByIdAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Retrieves a single organization by its ID, including its parent and direct
+            children, or <c>null</c> if no match is found.
+            </summary>
+            <param name="id">The organization's primary key.</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Repositories.IOrganizationRepository.GetByCodeAsync(System.String,System.Nullable{System.Guid},System.Threading.CancellationToken)">
+            <summary>
+            Finds an organization by code within a specific parent scope, or <c>null</c>
+            if no match exists. Used to enforce the uniqueness business rule before inserting.
+            </summary>
+            <param name="code">The short identifier code (case-sensitive after normalization).</param>
+            <param name="parentId">
+            The parent organization's ID, or <c>null</c> to search among root organizations.
+            </param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Repositories.IOrganizationRepository.GetAllAsync(System.Threading.CancellationToken)">
+            <summary>Returns all organizations, each including their parent and direct children.</summary>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Repositories.IOrganizationRepository.GetByParentIdAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>Returns all direct children of the specified parent organization.</summary>
+            <param name="parentId">The parent organization's ID.</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Repositories.IOrganizationRepository.UpdateAsync(LaerdalImplementation.Domain.Entities.Organization,System.Threading.CancellationToken)">
+            <summary>Persists changes to an existing organization and returns the updated entity.</summary>
+            <param name="organization">The organization with updated field values.</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.Repositories.IOrganizationRepository.ExistsAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Returns <c>true</c> if an organization with the given ID exists; otherwise <c>false</c>.
+            Cheaper than <see cref="M:LaerdalImplementation.Domain.Repositories.IOrganizationRepository.GetByIdAsync(System.Guid,System.Threading.CancellationToken)"/> when only existence matters (e.g., parent validation).
+            </summary>
+            <param name="id">The organization's primary key.</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+        </member>
+        <member name="T:LaerdalImplementation.Domain.ValueObjects.ManifestVersion">
+            <summary>
+            Represents a semantic version (Major.Minor.Patch) for a manifest.
+            Encapsulates the version bumping rules so callers can't construct an
+            invalid version string and the logic is not scattered across handlers.
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.ValueObjects.ManifestVersion.Major">
+            <summary>Breaking change — reset Minor and Patch to 0.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.ValueObjects.ManifestVersion.Minor">
+            <summary>Backwards-compatible new content — reset Patch to 0.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Domain.ValueObjects.ManifestVersion.Patch">
+            <summary>Small corrections that don't change the content structure.</summary>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.ValueObjects.ManifestVersion.#ctor(System.Int32,System.Int32,System.Int32)">
+            <param name="major">Must be ≥ 0.</param>
+            <param name="minor">Must be ≥ 0.</param>
+            <param name="patch">Must be ≥ 0.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.ValueObjects.ManifestVersion.Parse(System.String)">
+            <summary>
+            Parses a version string in the form "Major.Minor.Patch".
+            </summary>
+            <param name="version">e.g. "1.2.3"</param>
+            <exception cref="T:System.FormatException">Thrown for malformed strings.</exception>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.ValueObjects.ManifestVersion.BumpMajor">
+            <summary>Returns a new version with Major incremented and Minor/Patch reset to 0.</summary>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.ValueObjects.ManifestVersion.BumpMinor">
+            <summary>Returns a new version with Minor incremented and Patch reset to 0.</summary>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.ValueObjects.ManifestVersion.BumpPatch">
+            <summary>Returns a new version with only Patch incremented.</summary>
+        </member>
+        <member name="M:LaerdalImplementation.Domain.ValueObjects.ManifestVersion.ToString">
+            <summary>Returns the canonical "Major.Minor.Patch" string (e.g. "1.2.3").</summary>
+        </member>
+    </members>
+</doc>

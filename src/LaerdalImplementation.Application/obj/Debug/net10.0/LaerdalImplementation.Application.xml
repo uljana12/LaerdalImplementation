@@ -1,0 +1,556 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LaerdalImplementation.Application</name>
+    </assembly>
+    <members>
+        <member name="T:LaerdalImplementation.Application.Commands.CreateOrganizationCommand">
+            <summary>
+            Command that requests the creation of a new organization.
+            Implements <see cref="T:MediatR.IRequest`1"/> so MediatR can route it to
+            <see cref="T:LaerdalImplementation.Application.Commands.CreateOrganizationCommandHandler"/> without the caller needing a
+            direct reference to the handler.
+            </summary>
+            <param name="Data">The validated input data for the new organization.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Commands.CreateOrganizationCommand.#ctor(LaerdalImplementation.Application.DTOs.CreateOrganizationDto)">
+            <summary>
+            Command that requests the creation of a new organization.
+            Implements <see cref="T:MediatR.IRequest`1"/> so MediatR can route it to
+            <see cref="T:LaerdalImplementation.Application.Commands.CreateOrganizationCommandHandler"/> without the caller needing a
+            direct reference to the handler.
+            </summary>
+            <param name="Data">The validated input data for the new organization.</param>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Commands.CreateOrganizationCommand.Data">
+            <summary>The validated input data for the new organization.</summary>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Commands.CreateOrganizationCommandHandler">
+            <summary>
+            Handles <see cref="T:LaerdalImplementation.Application.Commands.CreateOrganizationCommand"/> by enforcing business rules,
+            constructing the domain entity via its factory, and persisting it.
+            <para>
+            Business rules enforced here (rather than in the controller) so they apply
+            regardless of how the command is triggered:
+            <list type="bullet">
+              <item>Organization code must be unique within the same parent scope.</item>
+              <item>The specified parent organization must already exist.</item>
+            </list>
+            </para>
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Commands.CreateOrganizationCommandHandler.#ctor(LaerdalImplementation.Domain.Repositories.IOrganizationRepository)">
+            <summary>
+            Initializes the handler with the organization repository injected by the DI container.
+            </summary>
+            <param name="organizationRepository">Abstraction over the Organizations table.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Commands.CreateOrganizationCommandHandler.Handle(LaerdalImplementation.Application.Commands.CreateOrganizationCommand,System.Threading.CancellationToken)">
+            <summary>
+            Executes the create-organization use case end-to-end:
+            validate → construct domain entity → persist → return DTO.
+            </summary>
+            <param name="request">The command carrying the new organization's data.</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+            <returns>A DTO representing the newly created organization.</returns>
+            <exception cref="T:System.InvalidOperationException">
+            Thrown if the code already exists under the same parent, or if the specified
+            parent organization does not exist.
+            </exception>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Commands.DeleteOrganizationCommand">
+            <summary>
+            Command that soft-deletes an organization by marking it inactive.
+            The organization record is retained in the database to preserve audit trails
+            and foreign key relationships with manifests.
+            </summary>
+            <param name="Id">Primary key of the organization to delete.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Commands.DeleteOrganizationCommand.#ctor(System.Guid)">
+            <summary>
+            Command that soft-deletes an organization by marking it inactive.
+            The organization record is retained in the database to preserve audit trails
+            and foreign key relationships with manifests.
+            </summary>
+            <param name="Id">Primary key of the organization to delete.</param>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Commands.DeleteOrganizationCommand.Id">
+            <summary>Primary key of the organization to delete.</summary>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Commands.DeleteOrganizationCommandHandler">
+            <summary>
+            Handles <see cref="T:LaerdalImplementation.Application.Commands.DeleteOrganizationCommand"/>.
+            Soft-deletes the organization by setting IsActive to false.
+            Rejects the request if the org has active children to avoid orphaning them.
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Commands.DeleteOrganizationCommandHandler.#ctor(LaerdalImplementation.Domain.Repositories.IOrganizationRepository)">
+            <summary>
+            Initializes the handler with the organization repository injected by the DI container.
+            </summary>
+            <param name="organizationRepository">Repository for loading and persisting organizations.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Commands.DeleteOrganizationCommandHandler.Handle(LaerdalImplementation.Application.Commands.DeleteOrganizationCommand,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Commands.PublishManifestCommand">
+            <summary>
+            Command that transitions a draft manifest to Published status and archives
+            the previously published manifest for the same organization (if one exists).
+            </summary>
+            <param name="OrganizationId">The owning organization's ID.</param>
+            <param name="ManifestId">The draft manifest to publish.</param>
+            <param name="VersionBump">
+            Which version component to increment: "major", "minor", or "patch".
+            The new version is calculated from the current highest version for this org.
+            </param>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Commands.PublishManifestCommand.#ctor(System.Guid,System.Guid,System.String)">
+            <summary>
+            Command that transitions a draft manifest to Published status and archives
+            the previously published manifest for the same organization (if one exists).
+            </summary>
+            <param name="OrganizationId">The owning organization's ID.</param>
+            <param name="ManifestId">The draft manifest to publish.</param>
+            <param name="VersionBump">
+            Which version component to increment: "major", "minor", or "patch".
+            The new version is calculated from the current highest version for this org.
+            </param>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Commands.PublishManifestCommand.OrganizationId">
+            <summary>The owning organization's ID.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Commands.PublishManifestCommand.ManifestId">
+            <summary>The draft manifest to publish.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Commands.PublishManifestCommand.VersionBump">
+            <summary>
+            Which version component to increment: "major", "minor", or "patch".
+            The new version is calculated from the current highest version for this org.
+            </summary>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Commands.PublishManifestCommandHandler">
+            <summary>
+            Handles <see cref="T:LaerdalImplementation.Application.Commands.PublishManifestCommand"/>.
+            <para>
+            TODO: implement. Steps will be:
+            1. Load the draft manifest by ID (404 if not found, 400 if already published).
+            2. Load the current Published manifest for the org (may be null for first publish).
+            3. Calculate the new version using <c>ManifestVersion.Parse().Bump*()</c>.
+            4. Call <c>currentPublished?.Archive()</c> on the old manifest.
+            5. Call <c>draftManifest.Publish(newVersion.ToString())</c>.
+            6. Persist both changes — ideally in a single transaction so they're atomic.
+            7. Return the newly published manifest as a DTO.
+            </para>
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Commands.PublishManifestCommandHandler.#ctor(LaerdalImplementation.Domain.Repositories.IManifestRepository)">
+            <summary>
+            Initializes the handler with the manifest repository injected by the DI container.
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Commands.PublishManifestCommandHandler.Handle(LaerdalImplementation.Application.Commands.PublishManifestCommand,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Commands.UpdateOrganizationCommand">
+            <summary>
+            Command that requests a partial update of an existing organization's mutable fields.
+            Only name, type, and active status can change — the code and hierarchy are immutable
+            after creation to preserve referential integrity.
+            </summary>
+            <param name="Id">Primary key of the organization to update.</param>
+            <param name="Name">New display name.</param>
+            <param name="Type">New organization type.</param>
+            <param name="IsActive">Whether the organization should remain active.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Commands.UpdateOrganizationCommand.#ctor(System.Guid,System.String,LaerdalImplementation.Domain.Enums.OrganizationType,System.Boolean)">
+            <summary>
+            Command that requests a partial update of an existing organization's mutable fields.
+            Only name, type, and active status can change — the code and hierarchy are immutable
+            after creation to preserve referential integrity.
+            </summary>
+            <param name="Id">Primary key of the organization to update.</param>
+            <param name="Name">New display name.</param>
+            <param name="Type">New organization type.</param>
+            <param name="IsActive">Whether the organization should remain active.</param>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Commands.UpdateOrganizationCommand.Id">
+            <summary>Primary key of the organization to update.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Commands.UpdateOrganizationCommand.Name">
+            <summary>New display name.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Commands.UpdateOrganizationCommand.Type">
+            <summary>New organization type.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Commands.UpdateOrganizationCommand.IsActive">
+            <summary>Whether the organization should remain active.</summary>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Commands.UpdateOrganizationCommandHandler">
+            <summary>
+            Handles <see cref="T:LaerdalImplementation.Application.Commands.UpdateOrganizationCommand"/>.
+            <para>
+            TODO: implement. Steps will be:
+            1. Load org by ID (404 if not found).
+            2. Call <c>org.Update(name, type, isActive)</c> — domain method validates and stamps UpdatedAt.
+            3. Persist via <see cref="M:LaerdalImplementation.Domain.Repositories.IOrganizationRepository.UpdateAsync(LaerdalImplementation.Domain.Entities.Organization,System.Threading.CancellationToken)"/>.
+            4. Return updated DTO.
+            </para>
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Commands.UpdateOrganizationCommandHandler.#ctor(LaerdalImplementation.Domain.Repositories.IOrganizationRepository)">
+            <summary>
+            Initializes the handler with the organization repository injected by the DI container.
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Commands.UpdateOrganizationCommandHandler.Handle(LaerdalImplementation.Application.Commands.UpdateOrganizationCommand,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="T:LaerdalImplementation.Application.DTOs.CreateManifestDto">
+            <summary>
+            Carries the input data needed to create a new manifest draft.
+            Flows from the API layer through to the manifest command handler.
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.CreateManifestDto.Name">
+            <summary>Display name for the manifest. Must not be blank.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.CreateManifestDto.Description">
+            <summary>Optional human-readable description of what this manifest covers.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.CreateManifestDto.Content">
+            <summary>
+            Optional initial JSON content following the courses/activities structure.
+            Defaults to an empty object if not provided; content can be added before publishing.
+            </summary>
+        </member>
+        <member name="T:LaerdalImplementation.Application.DTOs.CreateOrganizationDto">
+            <summary>
+            Carries the input data needed to create a new organization.
+            Flows from the API layer (deserialized from the HTTP request body) through to
+            <see cref="T:LaerdalImplementation.Application.Commands.CreateOrganizationCommandHandler"/>.
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.CreateOrganizationDto.Name">
+            <summary>Display name for the organization. Must not be blank.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.CreateOrganizationDto.Code">
+            <summary>
+            Short identifier code. Must be unique within the same parent scope.
+            Stored as uppercase.
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.CreateOrganizationDto.Type">
+            <summary>The kind of organization being created.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.CreateOrganizationDto.ParentId">
+            <summary>
+            ID of the parent organization, or <c>null</c> to create a root-level organization.
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.CreateOrganizationDto.ExternalId">
+            <summary>
+            Optional reference to an identity in an external system (e.g., OIDC directory).
+            </summary>
+        </member>
+        <member name="T:LaerdalImplementation.Application.DTOs.ManifestDto">
+            <summary>
+            Read model for a manifest, returned by manifest queries and commands.
+            Includes the full <see cref="P:LaerdalImplementation.Application.DTOs.ManifestDto.Content"/> JSON so the training app can consume
+            the manifest in a single response without a follow-up request.
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.ManifestDto.Id">
+            <summary>Unique identifier of the manifest.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.ManifestDto.OrganizationId">
+            <summary>ID of the organization this manifest belongs to.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.ManifestDto.Name">
+            <summary>Display name.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.ManifestDto.Description">
+            <summary>Optional human-readable description of the manifest's content.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.ManifestDto.Version">
+            <summary>Semantic version string (e.g., "1.2.0").</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.ManifestDto.Status">
+            <summary>Current lifecycle status: Draft, Published, or Archived.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.ManifestDto.Content">
+            <summary>
+            JSON blob describing the courses and learning activities.
+            Consumed directly by the downstream training application.
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.ManifestDto.PublishedAt">
+            <summary>UTC timestamp when the manifest was published, or <c>null</c> if still a draft.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.ManifestDto.CreatedAt">
+            <summary>UTC timestamp when the manifest was created.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.ManifestDto.UpdatedAt">
+            <summary>UTC timestamp of the most recent update.</summary>
+        </member>
+        <member name="T:LaerdalImplementation.Application.DTOs.OrganizationDto">
+            <summary>
+            Read model for an organization, returned by queries and commands.
+            Includes a recursive <see cref="P:LaerdalImplementation.Application.DTOs.OrganizationDto.Children"/> collection so callers receive the
+            full org subtree in a single response without needing extra requests.
+            <para>
+            Using a dedicated DTO (rather than exposing the domain entity directly) keeps
+            the API contract stable when the entity's internal structure changes, and avoids
+            circular-reference issues during JSON serialization.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.OrganizationDto.Id">
+            <summary>Unique identifier of the organization.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.OrganizationDto.ParentId">
+            <summary>ID of the parent organization, or <c>null</c> for a root org.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.OrganizationDto.Name">
+            <summary>Display name.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.OrganizationDto.Code">
+            <summary>Short identifier code (uppercase).</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.OrganizationDto.Type">
+            <summary>The kind of organization.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.OrganizationDto.ExternalId">
+            <summary>Optional reference to an external identity system.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.OrganizationDto.IsActive">
+            <summary>Whether the organization is currently active.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.OrganizationDto.CreatedAt">
+            <summary>UTC timestamp when the organization was created.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.OrganizationDto.UpdatedAt">
+            <summary>UTC timestamp of the most recent update.</summary>
+        </member>
+        <member name="P:LaerdalImplementation.Application.DTOs.OrganizationDto.Children">
+            <summary>Direct child organizations, each with their own children recursively.</summary>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Mappers.ManifestMapper">
+            <summary>
+            Converts between <see cref="T:LaerdalImplementation.Domain.Entities.Manifest"/> domain entities and <see cref="T:LaerdalImplementation.Application.DTOs.ManifestDto"/>
+            read models used by the Application layer.
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Mappers.ManifestMapper.ToDto(LaerdalImplementation.Domain.Entities.Manifest)">
+            <summary>
+            Maps a domain entity to a read DTO, including the full JSON content blob
+            so consumers (e.g., the training app) receive everything in one response.
+            </summary>
+            <param name="manifest">The entity loaded from the repository.</param>
+            <returns>A <see cref="T:LaerdalImplementation.Application.DTOs.ManifestDto"/> ready to return to the caller.</returns>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Mappers.OrganizationMapper">
+            <summary>
+            Converts between <see cref="T:LaerdalImplementation.Domain.Entities.Organization"/> domain entities and the DTOs used
+            by the Application layer. Keeping mapping logic in one place means the controller,
+            command handler, and query handler all produce consistent output shapes.
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Mappers.OrganizationMapper.ToDto(LaerdalImplementation.Domain.Entities.Organization)">
+            <summary>
+            Maps a domain entity to a read DTO. Recursively maps each child organization
+            so the caller receives the full subtree in one object.
+            </summary>
+            <param name="organization">The entity loaded from the repository.</param>
+            <returns>An <see cref="T:LaerdalImplementation.Application.DTOs.OrganizationDto"/> with nested children.</returns>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Mappers.OrganizationMapper.ToEntity(LaerdalImplementation.Application.DTOs.CreateOrganizationDto,System.Nullable{System.Guid})">
+            <summary>
+            Creates a new <see cref="T:LaerdalImplementation.Domain.Entities.Organization"/> entity from a create DTO by delegating
+            to the domain factory method, which enforces validation invariants.
+            </summary>
+            <param name="dto">The input data, typically sourced from the HTTP request.</param>
+            <param name="parentId">
+            Explicit parent ID to use; falls back to <see cref="P:LaerdalImplementation.Application.DTOs.CreateOrganizationDto.ParentId"/>
+            if not provided.
+            </param>
+            <returns>A valid, unsaved <see cref="T:LaerdalImplementation.Domain.Entities.Organization"/> entity.</returns>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Queries.GetOrganizationByIdQuery">
+            <summary>
+            Query that requests a single organization by its primary key ID,
+            including its parent reference and direct children.
+            Returns <c>null</c> when no organization with that ID exists.
+            </summary>
+            <param name="Id">The primary key of the organization to retrieve.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Queries.GetOrganizationByIdQuery.#ctor(System.Guid)">
+            <summary>
+            Query that requests a single organization by its primary key ID,
+            including its parent reference and direct children.
+            Returns <c>null</c> when no organization with that ID exists.
+            </summary>
+            <param name="Id">The primary key of the organization to retrieve.</param>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Queries.GetOrganizationByIdQuery.Id">
+            <summary>The primary key of the organization to retrieve.</summary>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Queries.GetOrganizationByIdQueryHandler">
+            <summary>
+            Handles <see cref="T:LaerdalImplementation.Application.Queries.GetOrganizationByIdQuery"/> by fetching a single organization
+            directly from the repository by primary key, then mapping it to a DTO.
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Queries.GetOrganizationByIdQueryHandler.#ctor(LaerdalImplementation.Domain.Repositories.IOrganizationRepository)">
+            <summary>
+            Initializes the handler with the organization repository injected by the DI container.
+            </summary>
+            <param name="organizationRepository">Abstraction over the Organizations table.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Queries.GetOrganizationByIdQueryHandler.Handle(LaerdalImplementation.Application.Queries.GetOrganizationByIdQuery,System.Threading.CancellationToken)">
+            <summary>
+            Fetches the organization with the specified ID and maps it to a DTO,
+            or returns <c>null</c> if no such organization exists.
+            </summary>
+            <param name="request">The query carrying the target organization ID.</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+            <returns>An <see cref="T:LaerdalImplementation.Application.DTOs.OrganizationDto"/> or <c>null</c>.</returns>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Queries.GetOrganizationsQuery">
+            <summary>
+            Query that requests a list of organizations, with an optional filter by parent.
+            <list type="bullet">
+              <item>When <see cref="P:LaerdalImplementation.Application.Queries.GetOrganizationsQuery.ParentId"/> is <c>null</c>, all organizations are returned.</item>
+              <item>When <see cref="P:LaerdalImplementation.Application.Queries.GetOrganizationsQuery.ParentId"/> is set, only direct children of that org are returned.</item>
+            </list>
+            </summary>
+            <param name="ParentId">Optional parent organization ID to filter by.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Queries.GetOrganizationsQuery.#ctor(System.Nullable{System.Guid})">
+            <summary>
+            Query that requests a list of organizations, with an optional filter by parent.
+            <list type="bullet">
+              <item>When <see cref="P:LaerdalImplementation.Application.Queries.GetOrganizationsQuery.ParentId"/> is <c>null</c>, all organizations are returned.</item>
+              <item>When <see cref="P:LaerdalImplementation.Application.Queries.GetOrganizationsQuery.ParentId"/> is set, only direct children of that org are returned.</item>
+            </list>
+            </summary>
+            <param name="ParentId">Optional parent organization ID to filter by.</param>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Queries.GetOrganizationsQuery.ParentId">
+            <summary>Optional parent organization ID to filter by.</summary>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Queries.GetOrganizationsQueryHandler">
+            <summary>
+            Handles <see cref="T:LaerdalImplementation.Application.Queries.GetOrganizationsQuery"/> by retrieving organizations from the
+            repository and mapping them to DTOs.
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Queries.GetOrganizationsQueryHandler.#ctor(LaerdalImplementation.Domain.Repositories.IOrganizationRepository)">
+            <summary>
+            Initializes the handler with the organization repository injected by the DI container.
+            </summary>
+            <param name="organizationRepository">Abstraction over the Organizations table.</param>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Queries.GetOrganizationsQueryHandler.Handle(LaerdalImplementation.Application.Queries.GetOrganizationsQuery,System.Threading.CancellationToken)">
+            <summary>
+            Fetches organizations — all of them, or only direct children of the specified parent —
+            and maps each to a <see cref="T:LaerdalImplementation.Application.DTOs.OrganizationDto"/> (including nested children).
+            </summary>
+            <param name="request">The query, optionally carrying a parent ID filter.</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+            <returns>A sequence of organization DTOs.</returns>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Queries.GetPublishedManifestQuery">
+            <summary>
+            Query used by the downstream training application to fetch the currently
+            published manifest for an organization before starting a learner session.
+            Identified by organization code (not ID) so the training app doesn't need
+            to store internal GUIDs — the code is stable and human-readable.
+            </summary>
+            <param name="OrgCode">The organization's short identifier code (case-insensitive).</param>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Queries.GetPublishedManifestQuery.#ctor(System.String)">
+            <summary>
+            Query used by the downstream training application to fetch the currently
+            published manifest for an organization before starting a learner session.
+            Identified by organization code (not ID) so the training app doesn't need
+            to store internal GUIDs — the code is stable and human-readable.
+            </summary>
+            <param name="OrgCode">The organization's short identifier code (case-insensitive).</param>
+        </member>
+        <member name="P:LaerdalImplementation.Application.Queries.GetPublishedManifestQuery.OrgCode">
+            <summary>The organization's short identifier code (case-insensitive).</summary>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Queries.GetPublishedManifestQueryHandler">
+            <summary>
+            Handles <see cref="T:LaerdalImplementation.Application.Queries.GetPublishedManifestQuery"/>.
+            <para>
+            TODO: implement. Steps will be:
+            1. Resolve org by code via <c>IOrganizationRepository.GetByCodeAsync</c> (null parentId for root,
+               or extend the interface to support a code-only lookup).
+            2. If org not found, return null (caller returns 404).
+            3. Call <c>IManifestRepository.GetPublishedByOrganizationAsync(org.Id)</c> —
+               this hits the IX_Manifest_OrgStatus index.
+            4. Map to <see cref="T:LaerdalImplementation.Application.DTOs.ManifestDto"/> and return.
+            </para>
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Queries.GetPublishedManifestQueryHandler.#ctor(LaerdalImplementation.Domain.Repositories.IOrganizationRepository,LaerdalImplementation.Domain.Repositories.IManifestRepository)">
+            <summary>
+            Initializes the handler with repositories injected by the DI container.
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Queries.GetPublishedManifestQueryHandler.Handle(LaerdalImplementation.Application.Queries.GetPublishedManifestQuery,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Services.AuthenticationService">
+            <summary>
+            Handles OIDC token validation and extracts a typed principal from the JWT.
+            <para>
+            TODO: implement. Responsibilities:
+            <list type="bullet">
+              <item>Fetch and cache the Laerdal OIDC public key (JWKS endpoint, 5-min TTL).</item>
+              <item>Validate the JWT signature, expiry, and issuer on each request.</item>
+              <item>Extract <c>sub</c>, <c>org</c>, and <c>roles</c> claims into a typed principal.</item>
+              <item>Surface the principal via an interface so controllers and policies can read it.</item>
+            </list>
+            </para>
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Services.AuthenticationService.ValidateTokenAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Validates the bearer token from the HTTP Authorization header and returns
+            the authenticated principal, or throws if the token is invalid/expired.
+            </summary>
+            <param name="bearerToken">Raw JWT string (without "Bearer " prefix).</param>
+            <param name="cancellationToken">Propagates cancellation from the HTTP request.</param>
+        </member>
+        <member name="T:LaerdalImplementation.Application.Services.AuthorizationService">
+            <summary>
+            Enforces role-based and scope-based access control for organizations and manifests.
+            <para>
+            TODO: implement. Authorization levels:
+            <list type="bullet">
+              <item><b>LaerdalAdmin</b> (role = <c>laerdal_admin</c>) — full CRUD on any organization,
+                    full manifest management across all orgs.</item>
+              <item><b>OrgAdmin</b> (role = <c>org_admin</c> + <c>orgId</c> claim) — CRUD scoped to their
+                    own org and descendants; cannot modify the parent org.</item>
+              <item><b>OrgEditor</b> (role = <c>org_editor</c>) — can draft and publish manifests;
+                    read-only on organization settings.</item>
+              <item><b>ServiceAccount</b> — OAuth 2.0 client credentials; read-only access scoped to a
+                    specific org code via the <c>manifest:read:{orgCode}</c> scope.</item>
+            </list>
+            </para>
+            </summary>
+        </member>
+        <member name="M:LaerdalImplementation.Application.Services.AuthorizationService.CanAccessOrganizationAsync(System.Object,System.Guid,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Returns <c>true</c> if the current principal is allowed to perform the requested
+            operation on the specified organization.
+            </summary>
+            <param name="principal">The authenticated principal (from AuthenticationService).</param>
+            <param name="organizationId">The target organization.</param>
+            <param name="requiredRole">The minimum role required for the operation.</param>
+        </member>
+    </members>
+</doc>

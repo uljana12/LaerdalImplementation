@@ -1,0 +1,44 @@
+<h2>How should we structure the frontend?</h2>
+<p class="subtitle">All three use React + TypeScript + Tailwind + shadcn/ui with Laerdal brand colours</p>
+
+<div class="options">
+
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Laerdal Platform — Two Sections <span style="background:#c8102e;color:#fff;font-size:0.7em;padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle;">Recommended</span></h3>
+      <p>One app, two areas in the left nav: <strong>Implementer</strong> (org tree + manifest lifecycle, wired to your real running API) and <strong>CPR Finder</strong> (polished discovery + booking mock). Shared Laerdal design system, shared header, same brand feel throughout.</p>
+      <div class="pros-cons" style="margin-top:12px;">
+        <div class="pros"><h4>Pros</h4><ul><li>Shows full-stack: real API + polished mock</li><li>Tells a complete Laerdal story in one app</li><li>Hiring manager sees both backend work AND CPR Finder thinking</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Most ambitious — needs good time management</li><li>CPR Finder section is mock data, not a real API</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Implementer Admin Only — CPR-Inspired UX</h3>
+      <p>Build only the org/manifest admin UI against your real API, but style it with CPR Finder UX patterns — cards for orgs instead of raw tables, a step-by-step wizard for publishing a manifest, a hierarchy map instead of a flat list. Everything works live. Nothing is mock.</p>
+      <div class="pros-cons" style="margin-top:12px;">
+        <div class="pros"><h4>Pros</h4><ul><li>100% real data, no mocks</li><li>Safest scope for 1-2 days</li><li>Deep quality over broad coverage</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Doesn't directly show CPR Finder thinking</li><li>Less obvious connection to the job posting</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>CPR Finder Frontend Only</h3>
+      <p>Abandon the backend connection. Build a full CPR Finder mock — map-based station discovery, booking flow with date/time picker, digital certification screen. No real API, but visually the closest to the actual role.</p>
+      <div class="pros-cons" style="margin-top:12px;">
+        <div class="pros"><h4>Pros</h4><ul><li>Most directly relevant to the job posting</li><li>Impressive user-facing UI/UX showcase</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Disconnects from the backend work you already did</li><li>All mock data — nothing actually runs end-to-end</li><li>Loses the "full-stack" story</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p style="margin-top:16px;font-size:0.9em;opacity:0.6;">Click to select, then tell me in the terminal.</p>

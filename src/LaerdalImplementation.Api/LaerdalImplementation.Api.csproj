@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.6.3" />
+    <PackageReference Include="MediatR" Version="12.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../LaerdalImplementation.Domain/LaerdalImplementation.Domain.csproj" />
+    <ProjectReference Include="../LaerdalImplementation.Application/LaerdalImplementation.Application.csproj" />
+    <ProjectReference Include="../LaerdalImplementation.Infrastructure/LaerdalImplementation.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
